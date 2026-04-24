@@ -3,9 +3,15 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key-change-in-production")
-
 DEBUG = os.environ.get("DEBUG", "True") == "True"
+
+_default_secret = "django-insecure-dev-key-change-in-production"
+SECRET_KEY = os.environ.get("SECRET_KEY", _default_secret)
+
+if not DEBUG and SECRET_KEY == _default_secret:
+    raise RuntimeError(
+        "SECRET_KEY must be set to a secure value via the SECRET_KEY environment variable in production."
+    )
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 

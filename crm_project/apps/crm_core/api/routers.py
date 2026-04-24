@@ -32,7 +32,8 @@ from apps.crm_core.api.schemas import (
     VisitIn,
     VisitOut,
 )
-from apps.crm_core.selectors.opportunity_selectors import get_opportunity_by_id, list_opportunities
+from apps.crm_core.selectors.opportunity_selectors import get_opportunity_by_id
+from apps.crm_core.selectors.opportunity_selectors import list_opportunities as list_opportunities_selector
 from apps.crm_core.selectors.reports_selectors import (
     get_average_time_per_stage,
     get_closing_percentage,
@@ -139,32 +140,25 @@ def create_pipeline(request, data: PipelineIn):
 # --- Opportunities ---
 
 @opportunities_router.get("/", response=List[OpportunityOut])
-def list_opps(request, owner_id: Optional[int] = None, status: Optional[str] = None, pipeline_id: Optional[int] = None):
-    return list(list_opportunities(owner_id=owner_id, status=status, pipeline_id=pipeline_id))
+def list_opportunities(request, owner_id: Optional[int] = None, status: Optional[str] = None, pipeline_id: Optional[int] = None):
+    return list(list_opportunities_selector(owner_id=owner_id, status=status, pipeline_id=pipeline_id))
 
 
 @opportunities_router.get("/{opportunity_id}/", response=OpportunityOut)
-def get_opp(request, opportunity_id: int):
+def get_opportunity(request, opportunity_id: int):
     return get_opportunity_by_id(opportunity_id)
 
 
 @opportunities_router.post("/", response=OpportunityOut)
-def create_opp(request, data: OpportunityIn):
-    # Use a dummy user (request.auth) - for now use first available user
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    user = User.objects.first()
-    return OpportunityService.create_opportunity(data=data.dict(), user=user)
+def create_opportunity(request, data: OpportunityIn):
+    return OpportunityService.create_opportunity(data=data.dict(), user=request.auth)
 
 
 @opportunities_router.post("/{opportunity_id}/move_stage/", response=OpportunityOut)
 def move_stage(request, opportunity_id: int, data: OpportunityMoveStageIn):
     opportunity = get_opportunity_by_id(opportunity_id)
     to_stage = get_object_or_404(PipelineStage, pk=data.to_stage_id)
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    user = User.objects.first()
-    return OpportunityService.move_stage(opportunity=opportunity, to_stage=to_stage, user=user, notes=data.notes)
+    return OpportunityService.move_stage(opportunity=opportunity, to_stage=to_stage, user=request.auth, notes=data.notes)
 
 
 # --- Activities ---

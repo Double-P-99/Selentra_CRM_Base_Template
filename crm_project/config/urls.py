@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from ninja import NinjaAPI
+from ninja.security import django_auth
 
 from apps.crm_core.api.routers import (
     companies_router,
@@ -12,7 +13,7 @@ from apps.crm_core.api.routers import (
     reports_router,
 )
 
-api = NinjaAPI(title="Selentra CRM API", version="1.0.0")
+api = NinjaAPI(title="Selentra CRM API", version="1.0.0", auth=django_auth)
 
 api.add_router("/companies/", companies_router)
 api.add_router("/contacts/", contacts_router)

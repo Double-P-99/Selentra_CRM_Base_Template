@@ -1,0 +1,47 @@
+{% extends "crm_client/base.html" %}
+{% block title %}Actividades — Selentra CRM{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">Mis Actividades</h4>
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <form method="get" class="d-flex gap-2">
+            <select name="status" class="form-select form-select-sm w-auto">
+                <option value="" {% if not current_status %}selected{% endif %}>Todas</option>
+                <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pendientes</option>
+                <option value="done" {% if current_status == 'done' %}selected{% endif %}>Completadas</option>
+                <option value="cancelled" {% if current_status == 'cancelled' %}selected{% endif %}>Canceladas</option>
+            </select>
+            <button class="btn btn-sm btn-primary">Filtrar</button>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Asunto</th>
+                    <th>Empresa</th>
+                    <th>Oportunidad</th>
+                    <th>Vence</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for act in activities %}
+                <tr class="{% if act.status == 'pending' and act.due_at and act.due_at.date < today %}table-danger{% endif %}">
+                    <td><span class="badge bg-secondary">{{ act.get_activity_type_display }}</span></td>
+                    <td>{{ act.subject }}</td>
+                    <td class="small">{% if act.company %}<a href="{% url 'crm_client:company_detail' act.company.pk %}">{{ act.company.name }}</a>{% else %}—{% endif %}</td>
+                    <td class="small">{% if act.opportunity %}<a href="{% url 'crm_client:opportunity_detail' act.opportunity.pk %}">{{ act.opportunity.title }}</a>{% else %}—{% endif %}</td>
+                    <td class="small">{{ act.due_at|date:"d/m/Y H:i"|default:"—" }}</td>
+                    <td><span class="badge bg-{% if act.status == 'done' %}success{% elif act.status == 'cancelled' %}secondary{% else %}warning text-dark{% endif %}">{{ act.get_status_display }}</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">Sin actividades</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from ninja import NinjaAPI
 from ninja.security import django_auth
 
@@ -26,4 +26,5 @@ api.add_router("/reports/", reports_router)
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", api.urls),
+    path("", include("apps.crm_client.urls", namespace="crm_client")),
 ]

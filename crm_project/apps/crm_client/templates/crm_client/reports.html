@@ -1,0 +1,65 @@
+{% extends "crm_client/base.html" %}
+{% block title %}Reportes — Selentra CRM{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">Reportes</h4>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card shadow-sm border-success">
+            <div class="card-body">
+                <div class="text-success small mb-1"><i class="bi bi-trophy-fill me-1"></i>Oportunidades ganadas</div>
+                <div class="fs-3 fw-bold text-success">{{ won_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card shadow-sm border-danger">
+            <div class="card-body">
+                <div class="text-danger small mb-1"><i class="bi bi-x-circle me-1"></i>Oportunidades perdidas</div>
+                <div class="fs-3 fw-bold text-danger">{{ lost_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small mb-1"><i class="bi bi-percent me-1"></i>Tasa de cierre</div>
+                <div class="fs-3 fw-bold">
+                    {% if won_count or lost_count %}
+                        {{ won_count|add:0|stringformat:"s" }}
+                        /
+                        {% widthratio won_count won_count|add:lost_count 100 %}%
+                    {% else %}—{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white fw-semibold">Facturación mensual (oportunidades ganadas)</div>
+    <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mes</th>
+                    <th class="text-end">Operaciones</th>
+                    <th class="text-end">Monto total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in monthly_won %}
+                <tr>
+                    <td>{{ row.month|date:"F Y" }}</td>
+                    <td class="text-end">{{ row.count }}</td>
+                    <td class="text-end">${{ row.total|floatformat:0 }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" class="text-center text-muted py-4">Sin datos de cierre aún</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "crm_client/base.html" %}
+{% block title %}{{ opportunity.title }} — Selentra CRM{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'crm_client:opportunity_list' %}" class="text-decoration-none text-muted small">
+        <i class="bi bi-arrow-left me-1"></i>Oportunidades
+    </a>
+</div>
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">{{ opportunity.title }}</h4>
+        <span class="text-muted small">{{ opportunity.pipeline.name }} / {{ opportunity.stage.name }}</span>
+    </div>
+    <span class="badge fs-6 bg-{% if opportunity.status == 'won' %}success{% elif opportunity.status == 'lost' %}danger{% else %}primary{% endif %}">
+        {{ opportunity.get_status_display }}
+    </span>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white fw-semibold">Detalles</div>
+            <div class="card-body small">
+                <div><span class="text-muted">Empresa:</span> <a href="{% url 'crm_client:company_detail' opportunity.company.pk %}">{{ opportunity.company.name }}</a></div>
+                {% if opportunity.contact %}<div><span class="text-muted">Contacto:</span> {{ opportunity.contact }}</div>{% endif %}
+                <div><span class="text-muted">Responsable:</span> {{ opportunity.owner.get_full_name|default:opportunity.owner.username }}</div>
+                <div><span class="text-muted">Monto:</span> <strong>${{ opportunity.amount|floatformat:0 }}</strong></div>
+                {% if opportunity.expected_close_date %}<div><span class="text-muted">Cierre estimado:</span> {{ opportunity.expected_close_date|date:"d/m/Y" }}</div>{% endif %}
+                {% if opportunity.description %}<div class="mt-2 text-muted">{{ opportunity.description }}</div>{% endif %}
+            </div>
+        </div>
+
+        <!-- Historial de etapas -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white fw-semibold">Historial de etapas</div>
+            <ul class="list-group list-group-flush">
+                {% for h in stage_history %}
+                <li class="list-group-item small">
+                    <div>{% if h.from_stage %}<span class="text-muted">{{ h.from_stage.name }} →</span> {% endif %}{{ h.to_stage.name }}</div>
+                    <div class="text-muted">{{ h.entered_at|date:"d/m/Y H:i" }} {% if h.changed_by %}· {{ h.changed_by.get_full_name|default:h.changed_by.username }}{% endif %}</div>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-muted">Sin historial</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white fw-semibold">Actividades</div>
+            <ul class="list-group list-group-flush">
+                {% for act in activities %}
+                <li class="list-group-item small">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <span class="badge bg-secondary me-1">{{ act.get_activity_type_display }}</span>
+                            {{ act.subject }}
+                        </div>
+                        <span class="badge bg-{% if act.status == 'done' %}success{% elif act.status == 'cancelled' %}secondary{% else %}warning text-dark{% endif %}">
+                            {{ act.get_status_display }}
+                        </span>
+                    </div>
+                    {% if act.description %}<div class="text-muted mt-1">{{ act.description }}</div>{% endif %}
+                    <div class="text-muted">{{ act.assigned_to.get_full_name|default:act.assigned_to.username }} · {{ act.due_at|date:"d/m/Y H:i"|default:"Sin fecha" }}</div>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-muted py-3">Sin actividades registradas</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

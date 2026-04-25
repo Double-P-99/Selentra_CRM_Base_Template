@@ -9,7 +9,7 @@ class ClientCustomReports(CRMReportsService):
 
     @staticmethod
     def revenue_vs_goal(*, year: int, month: int):
-        from apps.crm_core.models import SalesGoal
+        from crm_core.models import SalesGoal
         goals = SalesGoal.objects.filter(year=year, month=month).select_related("executive")
         invoiced = Invoice.objects.filter(
             issued_date__year=year,

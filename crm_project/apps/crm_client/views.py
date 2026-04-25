@@ -3,7 +3,7 @@ from django.db.models import Count, Sum
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
-from apps.crm_core.models import Activity, Company, Opportunity, Pipeline
+from crm_core.models import Activity, Company, Opportunity, Pipeline
 
 
 @login_required
@@ -114,6 +114,36 @@ def activity_list(request):
         activities = activities.filter(status=status)
     context = {"activities": activities, "current_status": status}
     return render(request, "crm_client/activity_list.html", context)
+
+
+@login_required
+def kanban(request):
+    pipeline_id = request.GET.get("pipeline", "")
+    pipelines = Pipeline.objects.filter(is_active=True).prefetch_related("stages")
+    pipeline = None
+
+    if pipeline_id:
+        pipeline = get_object_or_404(Pipeline, pk=pipeline_id, is_active=True)
+    else:
+        pipeline = pipelines.first()
+
+    stages = []
+    if pipeline:
+        for stage in pipeline.stages.filter(is_active=True).order_by("order"):
+            stage.open_opportunities = (
+                Opportunity.objects.filter(stage=stage, status="open")
+                .select_related("company", "owner")
+                .order_by("-amount")
+            )
+            stages.append(stage)
+
+    context = {
+        "pipeline": pipeline,
+        "pipelines": pipelines,
+        "stages": stages,
+        "current_pipeline": str(pipeline_id),
+    }
+    return render(request, "crm_client/kanban.html", context)
 
 
 @login_required

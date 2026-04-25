@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from apps.crm_core.models import Company, Opportunity
+from crm_core.models import Company, Opportunity
 
 
 class ClientProfile(models.Model):

@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "ninja",
     "apps.accounts",
-    "apps.crm_core",
+    "crm_core",
     "apps.crm_client",
 ]
 

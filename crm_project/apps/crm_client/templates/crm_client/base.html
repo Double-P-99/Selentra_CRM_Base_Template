@@ -49,6 +49,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'kanban' %}active{% endif %}"
+                       href="{% url 'crm_client:kanban' %}">
+                        <i class="bi bi-kanban me-2"></i>Kanban
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}"
                        href="{% url 'crm_client:reports' %}">
                         <i class="bi bi-bar-chart-line me-2"></i>Reportes

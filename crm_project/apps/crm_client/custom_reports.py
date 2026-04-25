@@ -1,7 +1,7 @@
 from django.db.models import Sum, Count, Q
 
-from apps.crm_core.models import Opportunity, Invoice
-from apps.crm_core.services.reports_service import CRMReportsService
+from crm_core.models import Opportunity, Invoice
+from crm_core.services.reports_service import CRMReportsService
 
 
 class ClientCustomReports(CRMReportsService):

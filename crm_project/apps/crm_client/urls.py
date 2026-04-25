@@ -10,5 +10,6 @@ urlpatterns = [
     path("opportunities/", views.opportunity_list, name="opportunity_list"),
     path("opportunities/<int:pk>/", views.opportunity_detail, name="opportunity_detail"),
     path("activities/", views.activity_list, name="activity_list"),
+    path("kanban/", views.kanban, name="kanban"),
     path("reports/", views.reports, name="reports"),
 ]

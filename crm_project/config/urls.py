@@ -3,7 +3,7 @@ from django.urls import path, include
 from ninja import NinjaAPI
 from ninja.security import django_auth
 
-from apps.crm_core.api.routers import (
+from crm_core.api.routers import (
     companies_router,
     contacts_router,
     pipelines_router,

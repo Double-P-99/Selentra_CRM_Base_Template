@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "django-crm-core"
+version = "0.1.0"
+description = "Reusable Django CRM core: models, services, selectors and API routers"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "Django>=5.0,<6.0",
+    "django-ninja>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "psycopg2-binary>=2.9",
+    "django-jazzmin>=3.0,<4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["crm_core*"]
+
+[tool.setuptools.package-data]
+crm_core = ["migrations/*.py", "management/commands/*.py"]

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Activities – {{ CRM_COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="fw-bold mb-0"><i class="bi bi-calendar-check me-2 text-info"></i>Activities
+    {% if overdue_count > 0 %}
+    <span class="badge bg-danger ms-2">{{ overdue_count }} overdue</span>
+    {% endif %}
+  </h4>
+  <a href="{% url 'activities:activity_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>New Activity</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="d-flex gap-2 flex-wrap align-items-center">
+      <input type="search" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search…" style="max-width:200px" />
+      <select name="type" class="form-select form-select-sm" style="max-width:130px">
+        <option value="">All types</option>
+        {% for val, label in type_choices %}<option value="{{ val }}" {% if type_filter == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <select name="status" class="form-select form-select-sm" style="max-width:140px">
+        <option value="">All statuses</option>
+        {% for val, label in status_choices %}<option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+      {% if q or type_filter or status_filter %}<a href="{% url 'activities:activity_list' %}" class="btn btn-sm btn-link text-muted">Clear</a>{% endif %}
+    </form>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Type</th><th>Title</th><th>Status</th><th>Priority</th><th>Due Date</th><th>Contact / Deal</th><th>Assigned</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for act in activities %}
+        <tr class="{% if act.is_overdue %}table-danger{% endif %}">
+          <td>
+            {% if act.type == 'call' %}<i class="bi bi-telephone text-success" title="Call"></i>
+            {% elif act.type == 'meeting' %}<i class="bi bi-camera-video text-primary" title="Meeting"></i>
+            {% elif act.type == 'email' %}<i class="bi bi-envelope text-warning" title="Email"></i>
+            {% else %}<i class="bi bi-check2-square text-secondary" title="Task"></i>{% endif %}
+            <small class="ms-1 text-muted">{{ act.get_type_display }}</small>
+          </td>
+          <td><a href="{% url 'activities:activity_detail' act.pk %}" class="text-decoration-none fw-semibold">{{ act.title }}</a></td>
+          <td><span class="badge bg-{% if act.status == 'completed' %}success{% elif act.status == 'cancelled' %}secondary{% elif act.status == 'in_progress' %}primary{% else %}warning text-dark{% endif %}">{{ act.get_status_display }}</span></td>
+          <td><span class="badge bg-{% if act.priority == 'high' %}danger{% elif act.priority == 'medium' %}warning text-dark{% else %}secondary{% endif %}">{{ act.get_priority_display }}</span></td>
+          <td class="{% if act.is_overdue %}text-danger fw-semibold{% else %}text-muted{% endif %} small">
+            {{ act.due_date|date:"M d, Y H:i"|default:'-' }}
+            {% if act.is_overdue %}<i class="bi bi-exclamation-triangle ms-1"></i>{% endif %}
+          </td>
+          <td class="text-muted small">{{ act.contact|default:'' }}{% if act.deal %}{{ act.deal.title }}{% endif %}</td>
+          <td class="text-muted small">{{ act.assigned_to|default:'-' }}</td>
+          <td class="text-end">
+            {% if act.status != 'completed' %}
+            <a href="{% url 'activities:activity_complete' act.pk %}" class="btn btn-sm btn-outline-success" title="Mark complete"><i class="bi bi-check-lg"></i></a>
+            {% endif %}
+            <a href="{% url 'activities:activity_update' act.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center py-5 text-muted">
+          <i class="bi bi-calendar-check fs-2 d-block mb-2"></i>No activities found.
+          <a href="{% url 'activities:activity_create' %}" class="d-block mt-2 btn btn-sm btn-primary">Schedule your first activity</a>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

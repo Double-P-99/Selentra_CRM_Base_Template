@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{{ CRM_COMPANY_NAME }}{% endblock %}</title>
+  {% load static %}
+  <!-- Bootstrap 5 (local vendor) -->
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" />
+  <!-- Bootstrap Icons (local vendor) -->
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/font/bootstrap-icons.min.css' %}" />
+  <!-- Custom CRM styles -->
+  <link rel="stylesheet" href="{% static 'css/crm.css' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% block body %}
+{% if user.is_authenticated %}
+<div class="d-flex" id="crm-wrapper">
+
+  <!-- Sidebar -->
+  <nav id="sidebar" class="d-flex flex-column p-3 text-white">
+    <a href="{% url 'dashboard:index' %}" class="d-flex align-items-center mb-3 text-white text-decoration-none">
+      {% if CRM_COMPANY_LOGO %}
+        <img src="{{ CRM_COMPANY_LOGO }}" alt="{{ CRM_COMPANY_NAME }}" height="32" class="me-2" />
+      {% else %}
+        <i class="bi bi-briefcase-fill fs-4 me-2"></i>
+      {% endif %}
+      <span class="fs-5 fw-bold">{{ CRM_COMPANY_NAME }}</span>
+    </a>
+    <hr />
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li><a href="{% url 'dashboard:index' %}" class="nav-link text-white {% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}">
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+      </a></li>
+      <li><a href="{% url 'contacts:contact_list' %}" class="nav-link text-white {% if request.resolver_match.namespace == 'contacts' and 'companies' not in request.path %}active{% endif %}">
+        <i class="bi bi-people me-2"></i> Contacts
+      </a></li>
+      <li><a href="{% url 'contacts:company_list' %}" class="nav-link text-white {% if 'companies' in request.path %}active{% endif %}">
+        <i class="bi bi-building me-2"></i> Companies
+      </a></li>
+      <li><a href="{% url 'deals:deal_list' %}" class="nav-link text-white {% if request.resolver_match.namespace == 'deals' %}active{% endif %}">
+        <i class="bi bi-currency-dollar me-2"></i> Deals
+      </a></li>
+      <li><a href="{% url 'activities:activity_list' %}" class="nav-link text-white {% if request.resolver_match.namespace == 'activities' %}active{% endif %}">
+        <i class="bi bi-calendar-check me-2"></i> Activities
+      </a></li>
+    </ul>
+    <hr />
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="bi bi-person-circle me-2 fs-5"></i>
+        <strong>{{ user.get_full_name|default:user.username }}</strong>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+        <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+        {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear me-2"></i>Admin</a></li>{% endif %}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <div id="main-content" class="flex-grow-1">
+    <nav class="navbar navbar-light bg-white border-bottom px-3 py-2">
+      <button class="btn btn-sm btn-outline-secondary" id="sidebarToggle" title="Toggle sidebar">
+        <i class="bi bi-list fs-5"></i>
+      </button>
+      <div class="ms-auto d-flex gap-2">
+        <a href="{% url 'contacts:contact_create' %}" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-person-plus me-1"></i>New Contact
+        </a>
+        <a href="{% url 'deals:deal_create' %}" class="btn btn-sm btn-primary">
+          <i class="bi bi-plus-lg me-1"></i>New Deal
+        </a>
+      </div>
+    </nav>
+
+    {% if messages %}
+    <div class="px-4 pt-3">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="p-4">
+      {% block content %}{% endblock %}
+    </div>
+  </div><!-- /#main-content -->
+
+</div><!-- /#crm-wrapper -->
+{% else %}
+<!-- Unauthenticated layout -->
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="w-100" style="max-width:420px">
+    {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %}
+    {% endif %}
+    {% block auth_content %}{% endblock %}
+  </div>
+</div>
+{% endif %}
+{% endblock body %}
+
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/crm.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

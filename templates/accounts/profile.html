@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}My Profile – {{ CRM_COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4"><i class="bi bi-person-circle me-2 text-primary"></i>My Profile</h4>
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        {% crispy form %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center">
+        {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" class="rounded-circle mb-3" width="100" height="100" alt="Avatar" />
+        {% else %}
+          <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:100px;height:100px">
+            <i class="bi bi-person-fill text-primary" style="font-size:2.5rem"></i>
+          </div>
+        {% endif %}
+        <h5 class="fw-bold">{{ user.get_full_name|default:user.username }}</h5>
+        <span class="badge bg-secondary">{{ user.get_role_display }}</span>
+        {% if user.team %}<p class="text-muted mt-2 mb-0">{{ user.team.name }}</p>{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

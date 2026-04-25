@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags humanize %}
+
+{% block title %}{{ company.name }} – {{ CRM_COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-1">
+      <li class="breadcrumb-item"><a href="{% url 'contacts:company_list' %}">Companies</a></li>
+      <li class="breadcrumb-item active">{{ company.name }}</li>
+    </ol></nav>
+    <h4 class="fw-bold mb-0">{{ company.name }}</h4>
+    {% if company.industry %}<p class="text-muted mb-0">{{ company.get_industry_display }}{% if company.size %} · {{ company.get_size_display }}{% endif %}</p>{% endif %}
+  </div>
+  <a href="{% url 'contacts:company_update' company.pk %}" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+</div>
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small mb-3">Company Info</h6>
+        {% if company.website %}<p class="mb-2"><i class="bi bi-globe me-2 text-muted"></i><a href="{{ company.website }}" target="_blank">{{ company.website }}</a></p>{% endif %}
+        {% if company.email %}<p class="mb-2"><i class="bi bi-envelope me-2 text-muted"></i><a href="mailto:{{ company.email }}">{{ company.email }}</a></p>{% endif %}
+        {% if company.phone %}<p class="mb-2"><i class="bi bi-telephone me-2 text-muted"></i>{{ company.phone }}</p>{% endif %}
+        {% if company.city or company.country %}<p class="mb-2"><i class="bi bi-geo-alt me-2 text-muted"></i>{{ company.city }}{% if company.city and company.country %}, {% endif %}{{ company.country }}</p>{% endif %}
+        {% if company.annual_revenue %}<p class="mb-2"><i class="bi bi-cash-stack me-2 text-muted"></i>${{ company.annual_revenue|intcomma }}/year</p>{% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-people me-2 text-primary"></i>Contacts ({{ contacts.count }})</div>
+      <ul class="list-group list-group-flush">
+        {% for c in contacts %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <a href="{% url 'contacts:contact_detail' c.pk %}" class="text-decoration-none">{{ c }}</a>
+          <span class="text-muted small">{{ c.job_title|default:'' }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-center text-muted py-3">No contacts linked.</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-currency-dollar me-2 text-warning"></i>Deals ({{ deals.count }})</div>
+      <ul class="list-group list-group-flush">
+        {% for deal in deals %}
+        <li class="list-group-item d-flex justify-content-between">
+          <a href="{% url 'deals:deal_detail' deal.pk %}" class="text-decoration-none">{{ deal.title }}</a>
+          <span class="text-success fw-semibold">${{ deal.value|intcomma }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-center text-muted py-3">No deals yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-chat-left-text me-2 text-secondary"></i>Notes</div>
+      <div class="card-body">
+        <form method="post">{% csrf_token %}{% crispy note_form %}</form>
+        {% for note in notes %}
+        <div class="border-bottom py-2">
+          <div class="d-flex justify-content-between">
+            <strong class="small">{{ note.author }}</strong>
+            <small class="text-muted">{{ note.created_at|date:"M d, Y H:i" }}</small>
+          </div>
+          <p class="mb-0">{{ note.content }}</p>
+        </div>
+        {% empty %}
+        <p class="text-muted small mb-0">No notes yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

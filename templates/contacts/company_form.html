@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if object %}Edit {{ object.name }}{% else %}New Company{% endif %} – {{ CRM_COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'contacts:company_list' %}">Companies</a></li>
+    <li class="breadcrumb-item active">{% if object %}Edit{% else %}New Company{% endif %}</li>
+  </ol>
+</nav>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-building me-2 text-success"></i>{% if object %}Edit Company{% else %}New Company{% endif %}</div>
+      <div class="card-body">{% crispy form %}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

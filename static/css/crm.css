@@ -1,0 +1,114 @@
+/* ============================================================
+   Selentra CRM – Base Stylesheet
+   Override variables in a client-specific CSS file.
+   ============================================================ */
+
+:root {
+  --crm-sidebar-bg: #1e2a3a;
+  --crm-sidebar-width: 240px;
+  --crm-sidebar-collapsed-width: 60px;
+  --crm-primary: #0d6efd;
+  --crm-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+body {
+  font-family: var(--crm-font);
+  background: #f4f6f9;
+}
+
+#crm-wrapper {
+  min-height: 100vh;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+#sidebar {
+  width: var(--crm-sidebar-width);
+  min-height: 100vh;
+  background: var(--crm-sidebar-bg);
+  transition: width 0.2s ease;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+#sidebar.collapsed {
+  width: var(--crm-sidebar-collapsed-width);
+}
+
+#sidebar.collapsed span,
+#sidebar.collapsed strong,
+#sidebar.collapsed .nav-link span,
+#sidebar.collapsed hr,
+#sidebar.collapsed p {
+  display: none !important;
+}
+
+#sidebar .nav-link {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+
+#sidebar .nav-link:hover,
+#sidebar .nav-link.active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Main content ────────────────────────────────────────────── */
+#main-content {
+  overflow-x: hidden;
+}
+
+/* ── Cards ───────────────────────────────────────────────────── */
+.card {
+  border-radius: 12px;
+}
+
+.card-header {
+  border-radius: 12px 12px 0 0 !important;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+
+/* ── Tables ──────────────────────────────────────────────────── */
+.table thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  color: #6c757d;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* ── Pipeline Kanban ─────────────────────────────────────────── */
+.pipeline-col .card {
+  min-height: 400px;
+}
+
+/* ── Utility ─────────────────────────────────────────────────── */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  #sidebar {
+    position: fixed;
+    z-index: 1050;
+    transform: translateX(-100%);
+  }
+
+  #sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  #main-content {
+    width: 100%;
+  }
+}

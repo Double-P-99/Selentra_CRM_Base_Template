@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if object %}Edit Activity{% else %}New Activity{% endif %} – {{ CRM_COMPANY_NAME }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'activities:activity_list' %}">Activities</a></li>
+    <li class="breadcrumb-item active">{% if object %}Edit{% else %}New Activity{% endif %}</li>
+  </ol>
+</nav>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-calendar-plus me-2 text-info"></i>{% if object %}Edit Activity{% else %}New Activity{% endif %}</div>
+      <div class="card-body">{% crispy form %}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

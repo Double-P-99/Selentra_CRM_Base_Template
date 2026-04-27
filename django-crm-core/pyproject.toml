@@ -12,6 +12,7 @@ license = { text = "MIT" }
 dependencies = [
     "Django>=5.0,<6.0",
     "django-ninja>=1.0",
+    "django-filter>=24.0",
 ]
 
 [project.optional-dependencies]

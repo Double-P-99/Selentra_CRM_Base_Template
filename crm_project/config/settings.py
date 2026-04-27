@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "ninja",
+    "django_filters",
     "apps.accounts",
     "crm_core",
     "apps.crm_client",

@@ -1,7 +1,7 @@
 import django_filters
 from django.utils.translation import gettext_lazy as _
 
-from crm_core.models import Activity, Company, Contact, Opportunity, Pipeline, Visit
+from crm_core.models import Activity, Company, Contact, Opportunity, Pipeline, PipelineStage, Visit
 
 
 class CompanyFilter(django_filters.FilterSet):
@@ -51,6 +51,14 @@ class PipelineFilter(django_filters.FilterSet):
     class Meta:
         model = Pipeline
         fields = ["name", "is_active"]
+
+
+class PipelineStageFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr="icontains", label=_("Nombre"))
+
+    class Meta:
+        model = PipelineStage
+        fields = ["name", "pipeline", "stage_type", "is_active"]
 
 
 class VisitFilter(django_filters.FilterSet):

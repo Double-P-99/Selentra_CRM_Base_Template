@@ -12,6 +12,7 @@ from crm_core.filters import (
     ContactFilter,
     OpportunityFilter,
     PipelineFilter,
+    PipelineStageFilter,
     VisitFilter,
 )
 from crm_core.forms import (
@@ -246,7 +247,7 @@ class PipelineDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 class PipelineStageListView(LoginRequiredMixin, FilterView):
     model = PipelineStage
     form_class = PipelineStageForm
-    filterset_class = PipelineFilter
+    filterset_class = PipelineStageFilter
     template_name = "crm_core/pipelinestage_list.html"
     context_object_name = "pipeline_stages"
     paginate_by = 25
